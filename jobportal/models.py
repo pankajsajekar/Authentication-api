@@ -58,7 +58,7 @@ class User(AbstractBaseUser):
         unique=True,
     )
     name = models.CharField(max_length=200)
-    mobile = models.CharField(max_length=200)
+    mobile = models.CharField(max_length=200) # unique
     register_id = models.CharField(max_length=100, blank=True, unique=True, editable=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)

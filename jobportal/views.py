@@ -9,7 +9,7 @@
 # import json
 # from django.views.decorators.csrf import csrf_exempt
 
-from .serializers import UserRegistrationSerializer, UserLoginSerialiser, UserProfileSerializer, UserChangePasswordSerializer, SendPasswordResetEmailSerializer, UserPasswordResetSerializer
+from .serializers import UserRegistrationSerializer, UserLoginSerialiser, UserProfileSerializer, UserChangePasswordSerializer, SendPasswordResetEmailSerializer, UserPasswordResetSerializer, UserLogoutSerializer
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -34,8 +34,8 @@ class UserRegistrationView(APIView):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             user = serializer.save()
-            token = get_tokens_for_user(user)
-            res= {'token':token,'msg':'Registration Successful'}
+            # token = get_tokens_for_user(user)
+            res= {'msg':'Registration Successful'}
             return Response(res, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -52,7 +52,6 @@ class UserLoginView(APIView):
                 token = get_tokens_for_user(user)
                 res= {'token':token,'msg':'Login Successful'}
                 return Response(res, status=status.HTTP_200_OK)
-
             print("error")
         return Response({'errors':{'non_field_errors':['Email And Password is not Valid']}}, status=status.HTTP_404_NOT_FOUND)
 
@@ -80,7 +79,6 @@ class SendPasswordResetEmailView(APIView):
     def post(self, request, format=None):
         serializer = SendPasswordResetEmailSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-
             res = {
                 'msg':'Password reset link send, please check your Email.'
             }
@@ -95,6 +93,22 @@ class UserPasswordResetView(APIView):
             res = {'msg': 'reset password set successful'}
             return Response(res, status=status.HTTP_200_OK)
 
+
+class UserLogoutView(APIView):
+    renderer_classes = [UserRenderer]
+    permission_classes = [IsAuthenticated]
+    def post(self, request, format=None):
+    #   logout logic remaining
+        print("after post")
+        print(request.headers)
+        a = request.headers
+        print(a['Authorization'])
+        a['Authorization']
+        # serializer = UserLogoutSerializer(data=request.data)
+        # serializer.is_valid(raise_exception=True)
+        # serializer.save()
+        res = {'msg':'User Logout Successful'}
+        return Response(res, status=status.HTTP_204_NO_CONTENT)
 
 # @csrf_exempt
 # @api_view(['GET', 'POST', 'PUT', 'DELETE'])
