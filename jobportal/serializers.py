@@ -5,6 +5,9 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from .utils import Util
 
+# third part-library
+from phonenumber_field.serializerfields import PhoneNumberField
+
 # class RegisterSerializer(serializers.Serializer):
 #     name = serializers.CharField(max_length=200)
 #     email = serializers.CharField(max_length=200)
@@ -30,10 +33,13 @@ from .utils import Util
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
+    mobile = PhoneNumberField()
     password2 = serializers.CharField(style={'input_type':'password'}, write_only=True)
+    is_candidate = serializers.BooleanField(default=False)
+    is_employer = serializers.BooleanField(default=False)
     class Meta:
         model = User
-        fields = ['email','name','mobile','password','password2']
+        fields = ['email','name','mobile', 'password', 'password2', 'is_candidate', 'is_employer']
         extra_kwargs = {'password':{'write_only': True}}
     
     def validate(self, attrs):

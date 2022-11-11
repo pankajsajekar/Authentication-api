@@ -48,9 +48,11 @@ class UserLoginView(APIView):
             email = serializer.data.get('email')
             password = serializer.data.get('password')
             user = authenticate(email=email, password=password)
+            # if user.is_candidate == True:
+            #     print("its candidate login")
             if user is not None:
                 token = get_tokens_for_user(user)
-                res= {'token':token,'msg':'Login Successful'}
+                res= {'token':token, 'msg':'Login Successful'}
                 return Response(res, status=status.HTTP_200_OK)
             print("error")
         return Response({'errors':{'non_field_errors':['Email And Password is not Valid']}}, status=status.HTTP_404_NOT_FOUND)

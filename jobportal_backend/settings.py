@@ -41,10 +41,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'jobportal',
+    # Third-party Apps
+    # This library is used to store phone number as per global standards.
+    'phonenumber_field',
     'rest_framework',
     'corsheaders',
     'rest_framework_simplejwt',
+
+    # Installed Modules
+    'jobportal',
+    'companyapp',
 ]
 
 MIDDLEWARE = [
