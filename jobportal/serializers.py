@@ -54,10 +54,20 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 
 class UserLoginSerialiser(serializers.ModelSerializer):
-    email = serializers.EmailField(max_length=255)
+    email = serializers.EmailField()
+    user_type = serializers.BooleanField(default=False)
     class Meta:
         model = User
-        fields = ['email', 'password']
+        fields = ['email', 'password','user_type']
+        
+    def validate(self, attrs):
+        user_type = attrs.get('user_type')
+        if user_type == True:
+            print("user type value get")
+        else:
+            raise serializers.ValidationError('login Cridential not match with user.')
+        return attrs
+
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -134,6 +144,18 @@ class UserPasswordResetSerializer(serializers.Serializer):
         except DjangoUnicodeDecodeError as identifier:
             PasswordResetTokenGenerator().check_token(user, token)
             raise ValueError('Token is not Valid or expired.')
+
+class AdminLoginSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(max_length=255)
+    class Meta:
+        model = User
+        fields = ['email', 'password', 'is_admin']
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        # fields = ['email', 'mobile', 'name', 'register_id']
+        fields = '__all__'
 
 class UserLogoutSerializer(serializers.Serializer):
     # refresh = serializers.CharField(max_length=255)

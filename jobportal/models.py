@@ -155,4 +155,36 @@ class EmployerModel(models.Model):
 
     def __str__(self):
         return self.company_name
-    
+
+class AdminProfileModel(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    owner = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name="admin_profiles")
+    first_name = models.CharField(max_length=75)
+    last_name = models.CharField(max_length=75)
+    date_of_birth = models.DateField(blank=True)
+    age = models.IntegerField(blank=True, null=True)
+    city = models.CharField(max_length=75, blank=True)
+    state = models.CharField(max_length=75, blank=True)
+    country = models.CharField(max_length=75, blank=True)
+
+    # Custom functrions to get name, full name and birth date.
+
+    def get_fullName(self):
+        return f"{self.first_name} {self.last_name}"
+
+    def get_shortName(self):
+        return f"{self.first_name}"
+
+    def get_birth_date(self):
+        return f"{self.date_of_birth}"
+
+    # Its a child class to change the meta data of the User model
+    # verbose_name_plural is used to name the plural form of User
+
+    class Meta:
+        verbose_name = "Admin Profile"
+        verbose_name_plural = "Admin Profiles"
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"

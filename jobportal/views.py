@@ -9,7 +9,7 @@
 # import json
 # from django.views.decorators.csrf import csrf_exempt
 
-from .serializers import UserRegistrationSerializer, UserLoginSerialiser, UserProfileSerializer, UserChangePasswordSerializer, SendPasswordResetEmailSerializer, UserPasswordResetSerializer, UserLogoutSerializer
+from .serializers import UserRegistrationSerializer, UserLoginSerialiser, UserProfileSerializer, UserChangePasswordSerializer, SendPasswordResetEmailSerializer, UserPasswordResetSerializer, UserLogoutSerializer, AdminLoginSerializer, UserSerializer
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -18,6 +18,8 @@ from django.contrib.auth import authenticate
 from .renderers import UserRenderer
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import ListCreateAPIView
+from .models import User
 
 
 # Genrate Token manually
@@ -34,7 +36,6 @@ class UserRegistrationView(APIView):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             user = serializer.save()
-            # token = get_tokens_for_user(user)
             res= {'msg':'Registration Successful'}
             return Response(res, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -48,9 +49,11 @@ class UserLoginView(APIView):
             email = serializer.data.get('email')
             password = serializer.data.get('password')
             user = authenticate(email=email, password=password)
-            # if user.is_candidate == True:
-            #     print("its candidate login")
             if user is not None:
+                if user.is_candidate == True:
+                    print("user is candidate")
+                else:
+                    return Response({'msg': 'You are not candidate'}, status=status.HTTP_401_UNAUTHORIZED)
                 token = get_tokens_for_user(user)
                 res= {'token':token, 'msg':'Login Successful'}
                 return Response(res, status=status.HTTP_200_OK)
@@ -95,6 +98,28 @@ class UserPasswordResetView(APIView):
             res = {'msg': 'reset password set successful'}
             return Response(res, status=status.HTTP_200_OK)
 
+class AdminLoginView(APIView):
+    renderer_classes = [UserRenderer]
+    def post(self, request, format=None):
+        serializer = AdminLoginSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            email = serializer.data.get('email')
+            password = serializer.data.get('password')
+            user = authenticate(email=email, password=password)
+            if user is not None:
+                if user.is_admin == True:
+                    res = { 'msg' : 'Admin Login!!!'}
+                    return Response(res, status=status.HTTP_200_OK)
+                else:
+                    return Response({'msg': 'Admin does not exists!!!'}, status=status.HTTP_401_UNAUTHORIZED)
+            else:
+                return Response({'errors': {'non_field_errors': ['Email or Password is incorrect']}}, status=status.HTTP_404_NOT_FOUND)
+            
+class UserView(ListCreateAPIView):
+    serializer_class = UserSerializer
+    renderer_classes = [UserRenderer]
+    permission_classes = [IsAuthenticated]
+    queryset = User.objects.filter(is_candidate=True)
 
 class UserLogoutView(APIView):
     renderer_classes = [UserRenderer]
