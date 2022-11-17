@@ -126,8 +126,6 @@ class UserLogoutView(APIView):
     permission_classes = [IsAuthenticated]
     def post(self, request, format=None):
     #   logout logic remaining
-        print("after post")
-        print(request.headers)
         a = request.headers
         print(a['Authorization'])
         a['Authorization']

@@ -39,7 +39,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     is_employer = serializers.BooleanField(default=False)
     class Meta:
         model = User
-        fields = ['email','name','mobile', 'password', 'password2', 'is_candidate', 'is_employer']
+        fields = ['email','name', 'mobile', 'password', 'password2', 'is_candidate', 'is_employer']
         extra_kwargs = {'password':{'write_only': True}}
     
     def validate(self, attrs):
@@ -62,9 +62,7 @@ class UserLoginSerialiser(serializers.ModelSerializer):
         
     def validate(self, attrs):
         user_type = attrs.get('user_type')
-        if user_type == True:
-            print("user type value get")
-        else:
+        if user_type != True:
             raise serializers.ValidationError('login Cridential not match with user.')
         return attrs
 

@@ -74,6 +74,7 @@ class User(AbstractBaseUser):
     is_admin = models.BooleanField(default=False)
     is_candidate = models.BooleanField(default=False)
     is_employer = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
 

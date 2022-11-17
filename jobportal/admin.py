@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, EmployerModel, CandidateModel
+from .models import User, EmployerModel, CandidateModel, AdminProfileModel
 from django.contrib.auth.admin import UserAdmin as BaseUserModelAdmin
 
 # Register your models here.
@@ -18,8 +18,8 @@ class UserModelAdmin(BaseUserModelAdmin):
     list_filter = ('is_admin',)
     fieldsets = (
         ('User Credentials', {'fields': ('email', 'password')}),
-        ('Personal info', {'fields': ('name', 'mobile', 'register_id','create_at','update_at')}),
-        ('Permissions', {'fields': ('is_admin','is_candidate','is_employer', 'is_phone_verified', 'is_email_verified')}),
+        ('Personal info', {'fields': ('name', 'mobile', 'register_id','create_at','update_at', 'is_phone_verified', 'is_email_verified')}),
+        ('Permissions', {'fields': ('is_superuser', 'is_admin','is_candidate','is_employer')}),
     )
     # add_fieldsets is not a standard ModelAdmin attribute. UserModelAdmin
     # overrides get_fieldsets to use this attribute when creating a user.
@@ -38,3 +38,4 @@ class UserModelAdmin(BaseUserModelAdmin):
 admin.site.register(User, UserModelAdmin)
 admin.site.register(CandidateModel)
 admin.site.register(EmployerModel)
+admin.site.register(AdminProfileModel)
